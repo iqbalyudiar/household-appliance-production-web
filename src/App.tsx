@@ -1,13 +1,16 @@
-import { Button } from "@material-tailwind/react";
-
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import routes from './utils/routesConfig'
 import "./App.css";
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      <Button>Button</Button>
-    </>
+    <Router>
+      <Routes>
+        {routes.map(({ path, component }) => (
+          <Route key={path} path={path} Component={component} />
+        ))}
+      </Routes>
+    </Router>
   );
 }
 
