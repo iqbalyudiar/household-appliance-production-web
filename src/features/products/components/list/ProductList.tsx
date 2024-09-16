@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { Card, Typography } from "@material-tailwind/react";
-import { getProductsList, setProductModalOpen, getProduct } from "../../slice/productSlice";
+import {
+  getProductsList,
+  setProductModalOpen,
+  getProduct,
+} from "../../slice/productSlice";
 const TABLE_HEAD = ["Name", "Description", "Price", ""];
 
 const ProductList = () => {
@@ -17,9 +21,16 @@ const ProductList = () => {
   }, []);
 
   const handleEdit = async (id: string) => {
-    const res = await dispatch(getProduct(id))
+    const res = await dispatch(getProduct(id));
     if (res.payload.success) {
       dispatch(setProductModalOpen({ type: "edit", isOpen: true }));
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const res = await dispatch(getProduct(id));
+    if (res.payload.success) {
+      dispatch(setProductModalOpen({ type: "delete", isOpen: true }));
     }
   };
 
@@ -92,6 +103,16 @@ const ProductList = () => {
                       onClick={() => handleEdit(_id)}
                     >
                       Edit
+                    </Typography>
+                    <Typography
+                      as="a"
+                      href="#"
+                      variant="small"
+                      color="red"
+                      className="font-medium"
+                      onClick={() => handleDelete(_id)}
+                    >
+                      Delete
                     </Typography>
                   </td>
                 </tr>

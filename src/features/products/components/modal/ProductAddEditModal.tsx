@@ -63,6 +63,9 @@ const ProductAddEditModal = () => {
     }
   };
   const handleClose = () => {
+    setProductName("");
+    setProductDescription("");
+    setProductPrice(0);
     dispatch(setProductModalOpen({ type: "", isOpen: false }));
   };
 

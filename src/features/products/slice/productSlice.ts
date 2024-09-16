@@ -69,7 +69,9 @@ export const addProduct = createAsyncThunk(
     try {
       const data = await createProductApi(productParam);
       if (data.success) {
-        dispatch(productSlice.actions.setNewProduct(productParam));
+        dispatch(
+          productSlice.actions.setNewProduct({ _id: data.id, ...productParam })
+        );
       }
       return data;
     } catch (error: any) {
