@@ -22,3 +22,9 @@ export const updateProductApi = async (id: string, product: IProductParam) => {
 
   return response.data;
 };
+
+export const deleteProductApi = async (id: string) => {
+  const response = await api.delete(`/products/${id}`);
+
+  return response.data;
+};

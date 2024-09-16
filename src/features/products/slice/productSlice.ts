@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   createProductApi,
   updateProductApi,
+  deleteProductApi,
   getProductsApi,
   getProductApi,
 } from "../api/productApi";
@@ -104,6 +105,24 @@ export const editProduct = createAsyncThunk(
   }
 );
 
+export const deleteProduct = createAsyncThunk(
+  "product/deleteProduct",
+  async (id: string, { dispatch, rejectWithValue }) => {
+    try {
+      const data = await deleteProductApi(id);
+      if (data.success) {
+        dispatch(productSlice.actions.setDeletedProduct({ id }));
+      }
+      return data;
+    } catch (error: any) {
+      const rejectValue = rejectWithValue(
+        error?.response?.data?.message || "Create Failed"
+      );
+      return rejectValue;
+    }
+  }
+);
+
 const initialState = {
   products: [],
   selectedProduct: {
@@ -137,6 +156,11 @@ const productSlice = createSlice({
         product._id === action.payload.id
           ? { _id: action.payload.id, ...action.payload }
           : product
+      );
+    },
+    setDeletedProduct(state, action) {
+      state.products = state.products.filter(
+        (product) => product._id !== action.payload.id
       );
     },
     setSelectedProduct(state, action) {

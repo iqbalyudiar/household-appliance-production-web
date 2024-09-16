@@ -14,6 +14,7 @@ import {
   setProductModalOpen,
   addProduct,
   editProduct,
+  deleteProduct,
 } from "../../slice/productSlice";
 
 const ProductAddEditModal = () => {
@@ -46,8 +47,6 @@ const ProductAddEditModal = () => {
           : productPrice,
     };
 
-    console.log({ param });
-
     let res;
     if (type === "add") {
       res = await dispatch(addProduct(param));
@@ -55,9 +54,11 @@ const ProductAddEditModal = () => {
       res = await dispatch(
         editProduct({ id: selectedProduct.id, productParam: param })
       );
+    } else if (type === "delete") {
+      res = await dispatch(deleteProduct(selectedProduct.id));
     }
 
-    if (res.payload.success) {
+    if (res?.payload.success) {
       handleClose();
     }
   };
@@ -65,12 +66,26 @@ const ProductAddEditModal = () => {
     dispatch(setProductModalOpen({ type: "", isOpen: false }));
   };
 
-  const modalTitle = type === "add" ? "Add A Product" : "Edit Product";
+  const modalTitle = () => {
+    switch (type) {
+      case "delete":
+        return "Delete Product";
+      case "edit":
+        return "Edit Product";
+      default:
+        return "Add A Product";
+    }
+  };
 
   return (
     <Dialog open={isOpen}>
-      <DialogHeader>{modalTitle}</DialogHeader>
+      <DialogHeader>{modalTitle()}</DialogHeader>
       <DialogBody>
+        {type === "delete" ? (
+          <Typography>Do you want to delete this product?</Typography>
+        ) : (
+          ""
+        )}
         <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96">
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="h6" color="blue-gray" className="-mb-3">
@@ -85,6 +100,7 @@ const ProductAddEditModal = () => {
               }}
               onChange={(e) => setProductName(e.target.value)}
               value={productName}
+              disabled={type === "delete"}
             />
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Description
@@ -97,6 +113,7 @@ const ProductAddEditModal = () => {
               }}
               onChange={(e) => setProductDescription(e.target.value)}
               value={productDescription}
+              disabled={type === "delete"}
             />
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Price
@@ -110,6 +127,7 @@ const ProductAddEditModal = () => {
               }}
               onChange={(e) => setProductPrice(e.target.value)}
               value={productPrice}
+              disabled={type === "delete"}
             />
           </div>
         </form>
