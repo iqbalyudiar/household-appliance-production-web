@@ -19,7 +19,6 @@ const RegisterForm = () => {
       const res = await dispatch(
         register({ name, email, password, roles: "staff" })
       );
-      console.log({ res });
       if (res?.payload?.success) {
         navigate("/login");
       }
