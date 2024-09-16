@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { Card, Typography } from "@material-tailwind/react";
-import { getProductsList } from "../../slice/productSlice";
+import { getProductsList, setProductModalOpen, getProduct } from "../../slice/productSlice";
 const TABLE_HEAD = ["Name", "Description", "Price", ""];
 
 const ProductList = () => {
@@ -15,6 +15,13 @@ const ProductList = () => {
 
     getProducts();
   }, []);
+
+  const handleEdit = async (id: string) => {
+    const res = await dispatch(getProduct(id))
+    if (res.payload.success) {
+      dispatch(setProductModalOpen({ type: "edit", isOpen: true }));
+    }
+  };
 
   return (
     <Card className="h-full w-full overflow-scroll justify-start">
@@ -40,7 +47,7 @@ const ProductList = () => {
         <tbody>
           {products &&
             products.length > 0 &&
-            products.map(({ name, description, price }, index) => {
+            products.map(({ name, description, price, _id }, index) => {
               const isLast = index === products.length - 1;
               const classes = isLast
                 ? "p-4"
@@ -82,6 +89,7 @@ const ProductList = () => {
                       variant="small"
                       color="blue-gray"
                       className="font-medium"
+                      onClick={() => handleEdit(_id)}
                     >
                       Edit
                     </Typography>

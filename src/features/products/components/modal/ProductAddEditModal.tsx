@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from "react";
+import { useState, useEffect, MouseEvent } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -10,26 +10,55 @@ import {
   Textarea,
 } from "@material-tailwind/react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { setProductModalOpen, addProduct } from "../../slice/productSlice";
+import {
+  setProductModalOpen,
+  addProduct,
+  editProduct,
+} from "../../slice/productSlice";
 
 const ProductAddEditModal = () => {
-  const [productName, setProductName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [productPrice, setProductPrice] = useState("");
+  const {
+    modal: { type, isOpen },
+    selectedProduct,
+  } = useAppSelector((state) => state.products);
+  const [productName, setProductName] = useState(selectedProduct.name);
+  const [productDescription, setProductDescription] = useState(
+    selectedProduct.description
+  );
+  const [productPrice, setProductPrice] = useState(selectedProduct.price);
   const dispatch = useAppDispatch();
-  const { type, isOpen } = useAppSelector((state) => state.products.modal);
+
+  useEffect(() => {
+    setProductName(selectedProduct.name);
+    setProductDescription(selectedProduct.description);
+    setProductPrice(selectedProduct.price);
+  }, [selectedProduct]);
+
   const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     const param = {
       name: productName,
       description: productDescription,
-      price: parseFloat(productPrice),
+      price:
+        typeof productPrice === "string"
+          ? parseFloat(productPrice)
+          : productPrice,
     };
-    const res = await dispatch(addProduct(param));
+
+    console.log({ param });
+
+    let res;
+    if (type === "add") {
+      res = await dispatch(addProduct(param));
+    } else if (type === "edit") {
+      res = await dispatch(
+        editProduct({ id: selectedProduct.id, productParam: param })
+      );
+    }
 
     if (res.payload.success) {
-      handleClose()
+      handleClose();
     }
   };
   const handleClose = () => {
@@ -55,6 +84,7 @@ const ProductAddEditModal = () => {
                 className: "before:content-none after:content-none",
               }}
               onChange={(e) => setProductName(e.target.value)}
+              value={productName}
             />
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Description
@@ -66,6 +96,7 @@ const ProductAddEditModal = () => {
                 className: "before:content-none after:content-none",
               }}
               onChange={(e) => setProductDescription(e.target.value)}
+              value={productDescription}
             />
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Price
@@ -78,6 +109,7 @@ const ProductAddEditModal = () => {
                 className: "before:content-none after:content-none",
               }}
               onChange={(e) => setProductPrice(e.target.value)}
+              value={productPrice}
             />
           </div>
         </form>
