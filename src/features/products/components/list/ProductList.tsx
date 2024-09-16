@@ -1,25 +1,12 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { Card, Typography } from "@material-tailwind/react";
 import { getProductsList } from "../../slice/productSlice";
 const TABLE_HEAD = ["Name", "Description", "Price", ""];
 
-const TABLE_ROWS = [
-  {
-    name: "Mirror",
-    description: "Mirror on the wall",
-    price: 1,
-  },
-  {
-    name: "Broom",
-    description: "Broom on the wall",
-    price: 2,
-  },
-];
-
 const ProductList = () => {
-  const dispatch = useDispatch();
-  const products = useSelector((state) => state.products).products;
+  const dispatch = useAppDispatch();
+  const products = useAppSelector((state) => state.products).products;
 
   useEffect(() => {
     const getProducts = async () => {
@@ -54,7 +41,7 @@ const ProductList = () => {
           {products &&
             products.length > 0 &&
             products.map(({ name, description, price }, index) => {
-              const isLast = index === TABLE_ROWS.length - 1;
+              const isLast = index === products.length - 1;
               const classes = isLast
                 ? "p-4"
                 : "p-4 border-b border-blue-gray-50";
