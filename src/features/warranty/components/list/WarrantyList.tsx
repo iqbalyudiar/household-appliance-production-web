@@ -1,7 +1,16 @@
 import { useEffect, useCallback } from "react";
-import { Card, Typography } from "@material-tailwind/react";
+import { Card, Typography, Spinner } from "@material-tailwind/react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { getWarrantiesList } from "../../slice/warrantySlice";
+import {
+  getWarrantiesList,
+  setWarrantyModal,
+  setSelectedProduct,
+} from "../../slice/warrantySlice";
+
+interface IChangeStatus {
+  id: string;
+  type: string;
+}
 
 const TABLE_HEAD = [
   "Claim ID",
@@ -13,7 +22,9 @@ const TABLE_HEAD = [
   "Action",
 ];
 const WarrantyList = () => {
-  const { warranties } = useAppSelector((state) => state.warranty);
+  const { warranties, isFetchingWarranties } = useAppSelector(
+    (state) => state.warranty
+  );
   const dispatch = useAppDispatch();
 
   const getWarranties = useCallback(async () => {
@@ -24,8 +35,10 @@ const WarrantyList = () => {
     getWarranties();
   }, [getWarranties]);
 
-  const handleApprove = (id) => {};
-  const handleReject = (id) => {};
+  const handleChangeStatus = ({ id, type }: IChangeStatus) => {
+    dispatch(setSelectedProduct({ id }));
+    dispatch(setWarrantyModal({ type, isOpen: true }));
+  };
 
   const classStatus = (status: string) => {
     switch (status) {
@@ -38,7 +51,15 @@ const WarrantyList = () => {
     }
   };
 
-  console.log(warranties);
+  if (isFetchingWarranties) {
+    return (
+      <div className="flex flex-col items-center">
+        <Spinner className="h-12 w-12 mb-2" />
+        <Typography variant="h3">Loading...</Typography>
+      </div>
+    );
+  }
+
   return (
     <Card className="h-full w-full overflow-scroll justify-start">
       <table className="w-full min-w-max table-auto text-left">
@@ -149,26 +170,42 @@ const WarrantyList = () => {
                         </Typography>
                       </td>
                       <td className={`${classes} flex`}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          variant="small"
-                          color="blue-gray"
-                          className="font-medium mr-3"
-                          onClick={() => handleApprove(_id)}
-                        >
-                          Approve
-                        </Typography>
-                        <Typography
-                          as="a"
-                          href="#"
-                          variant="small"
-                          color="red"
-                          className="font-medium"
-                          onClick={() => handleReject(_id)}
-                        >
-                          Reject
-                        </Typography>
+                        {status === "pending" ? (
+                          <>
+                            <Typography
+                              as="a"
+                              href="#"
+                              variant="small"
+                              color="blue-gray"
+                              className="font-medium mr-3"
+                              onClick={() =>
+                                handleChangeStatus({
+                                  id: _id,
+                                  type: "approved",
+                                })
+                              }
+                            >
+                              Approve
+                            </Typography>
+                            <Typography
+                              as="a"
+                              href="#"
+                              variant="small"
+                              color="red"
+                              className="font-medium"
+                              onClick={() =>
+                                handleChangeStatus({
+                                  id: _id,
+                                  type: "rejected",
+                                })
+                              }
+                            >
+                              Reject
+                            </Typography>
+                          </>
+                        ) : (
+                          "-"
+                        )}
                       </td>
                     </tr>
                   );
