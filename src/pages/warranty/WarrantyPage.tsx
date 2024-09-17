@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import WarrantyList from "../../features/warranty/components/list/WarrantyList";
 
 const WarrantyPage: React.FC = () => {
-    return (
-        <div>: React.FC</div>
-    )
-}
+  return (
+    <div>
+      <WarrantyList />
+    </div>
+  );
+};
 
-export default WarrantyPage
+export default WarrantyPage;
