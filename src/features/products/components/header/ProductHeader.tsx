@@ -8,7 +8,7 @@ const ProductHeader = () => {
   };
   return (
     <div className="flex justify-between align-middle mb-3">
-      <Typography>Product List</Typography>
+      <Typography variant="h2">Product List</Typography>
       <Button onClick={handleOpen}>+ Add</Button>
     </div>
   );

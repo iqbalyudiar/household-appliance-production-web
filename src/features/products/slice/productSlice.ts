@@ -21,6 +21,7 @@ export interface IProductParam {
 export const getProductsList = createAsyncThunk(
   "products/getProductsList",
   async (_, { dispatch, rejectWithValue }) => {
+    dispatch(productSlice.actions.setIsFetchingProductsList(true))
     try {
       const data = await getProductsApi();
       dispatch(productSlice.actions.setProductsList(data.products));
@@ -30,6 +31,8 @@ export const getProductsList = createAsyncThunk(
         error?.response?.data?.message || "Get Products Failed"
       );
       return rejectValue;
+    } finally {
+      dispatch(productSlice.actions.setIsFetchingProductsList(false))
     }
   }
 );
@@ -126,6 +129,7 @@ export const deleteProduct = createAsyncThunk(
 );
 
 const initialState = {
+  isFetchingProductsList: false,
   products: [],
   selectedProduct: {
     id: "",
@@ -175,6 +179,9 @@ const productSlice = createSlice({
         price,
       };
     },
+    setIsFetchingProductsList (state,action) {
+      state.isFetchingProductsList = action.payload
+    }
   },
 });
 

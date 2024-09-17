@@ -1,16 +1,18 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
-import { Card, Typography } from "@material-tailwind/react";
+import { Card, Typography, Spinner } from "@material-tailwind/react";
 import {
   getProductsList,
   setProductModalOpen,
   getProduct,
 } from "../../slice/productSlice";
-const TABLE_HEAD = ["Name", "Description", "Price", ""];
+const TABLE_HEAD = ["Name", "Description", "Price", "Action"];
 
 const ProductList = () => {
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.products).products;
+  const { products, isFetchingProductsList } = useAppSelector(
+    (state) => state.products
+  );
 
   useEffect(() => {
     const getProducts = async () => {
@@ -34,6 +36,15 @@ const ProductList = () => {
     }
   };
 
+  if (isFetchingProductsList) {
+    return (
+      <div className="flex flex-col items-center">
+        <Spinner className="h-12 w-12 mb-2" />
+        <Typography variant="h3">Loading...</Typography>
+      </div>
+    );
+  }
+
   return (
     <Card className="h-full w-full overflow-scroll justify-start">
       <table className="w-full min-w-max table-auto text-left">
@@ -56,8 +67,7 @@ const ProductList = () => {
           </tr>
         </thead>
         <tbody>
-          {products &&
-            products.length > 0 &&
+          {products && products.length > 0 ? (
             products.map(({ name, description, price, _id }, index) => {
               const isLast = index === products.length - 1;
               const classes = isLast
@@ -93,13 +103,13 @@ const ProductList = () => {
                       {price}
                     </Typography>
                   </td>
-                  <td className={classes}>
+                  <td className={`${classes} flex`}>
                     <Typography
                       as="a"
                       href="#"
                       variant="small"
                       color="blue-gray"
-                      className="font-medium"
+                      className="font-medium mr-3"
                       onClick={() => handleEdit(_id)}
                     >
                       Edit
@@ -117,7 +127,10 @@ const ProductList = () => {
                   </td>
                 </tr>
               );
-            })}
+            })
+          ) : (
+            <Typography variant="h3" className="text-center">Product List Data Not Found</Typography>
+          )}
         </tbody>
       </table>
     </Card>
