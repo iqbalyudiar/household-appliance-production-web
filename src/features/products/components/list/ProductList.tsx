@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { Card, Typography, Spinner } from "@material-tailwind/react";
 import {
@@ -14,13 +14,13 @@ const ProductList = () => {
     (state) => state.products
   );
 
-  useEffect(() => {
-    const getProducts = async () => {
-      await dispatch(getProductsList());
-    };
+  const getProducts = useCallback(async () => {
+    await dispatch(getProductsList());
+  }, [dispatch]);
 
+  useEffect(() => {
     getProducts();
-  }, []);
+  }, [getProducts]);
 
   const handleEdit = async (id: string) => {
     const res = await dispatch(getProduct(id));
@@ -129,7 +129,9 @@ const ProductList = () => {
               );
             })
           ) : (
-            <Typography variant="h3" className="text-center">Product List Data Not Found</Typography>
+            <Typography variant="paragraph" className="text-center text-xl">
+              Product List Data Not Found
+            </Typography>
           )}
         </tbody>
       </table>
