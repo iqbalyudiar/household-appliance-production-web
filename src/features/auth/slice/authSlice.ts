@@ -55,6 +55,10 @@ export const register = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async () => {
+  localStorage.removeItem(STORAGE_AUTH_TOKEN);
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -76,7 +80,5 @@ const authSlice = createSlice({
     },
   },
 });
-
-export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;
