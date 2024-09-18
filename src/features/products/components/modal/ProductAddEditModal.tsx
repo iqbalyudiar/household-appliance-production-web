@@ -15,6 +15,7 @@ import {
   addProduct,
   editProduct,
   deleteProduct,
+  removeSelectedProduct,
 } from "../../slice/productSlice";
 
 const ProductAddEditModal = () => {
@@ -66,6 +67,7 @@ const ProductAddEditModal = () => {
     setProductName("");
     setProductDescription("");
     setProductPrice(0);
+    dispatch(removeSelectedProduct());
     dispatch(setProductModalOpen({ type: "", isOpen: false }));
   };
 
