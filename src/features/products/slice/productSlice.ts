@@ -21,10 +21,10 @@ export interface IProductParam {
 export const getProductsList = createAsyncThunk(
   "products/getProductsList",
   async (_, { dispatch, rejectWithValue }) => {
-    dispatch(productSlice.actions.setIsFetchingProductsList(true));
+    dispatch(setIsFetchingProductsList(true));
     try {
       const data = await getProductsApi();
-      dispatch(productSlice.actions.setProductsList(data.products));
+      dispatch(setProductsList(data.products));
       return data;
     } catch (error: any) {
       const rejectValue = rejectWithValue(
@@ -32,7 +32,7 @@ export const getProductsList = createAsyncThunk(
       );
       return rejectValue;
     } finally {
-      dispatch(productSlice.actions.setIsFetchingProductsList(false));
+      dispatch(setIsFetchingProductsList(false));
     }
   }
 );
@@ -48,7 +48,7 @@ export const getProduct = createAsyncThunk(
         description: data.description,
         price: data.price,
       };
-      dispatch(productSlice.actions.setSelectedProduct(selectedData));
+      dispatch(setSelectedProduct(selectedData));
       return data;
     } catch (error: any) {
       const rejectValue = rejectWithValue(
@@ -62,7 +62,7 @@ export const getProduct = createAsyncThunk(
 export const setProductModalOpen = createAsyncThunk(
   "product/setProductModalOpen",
   ({ type, isOpen }: IModal, { dispatch }) => {
-    dispatch(productSlice.actions.setProductModalOpen({ type, isOpen }));
+    dispatch(setProductModal({ type, isOpen }));
   }
 );
 
@@ -72,9 +72,7 @@ export const addProduct = createAsyncThunk(
     try {
       const data = await createProductApi(productParam);
       if (data.success) {
-        dispatch(
-          productSlice.actions.setNewProduct({ _id: data.id, ...productParam })
-        );
+        dispatch(setNewProduct({ _id: data.id, ...productParam }));
       }
       return data;
     } catch (error: any) {
@@ -96,9 +94,7 @@ export const editProduct = createAsyncThunk(
       const { id, productParam } = params;
       const data = await updateProductApi(id, productParam);
       if (data.success) {
-        dispatch(
-          productSlice.actions.setUpdatedProduct({ id, ...productParam })
-        );
+        dispatch(setUpdatedProduct({ id, ...productParam }));
       }
       return data;
     } catch (error: any) {
@@ -116,7 +112,7 @@ export const deleteProduct = createAsyncThunk(
     try {
       const data = await deleteProductApi(id);
       if (data.success) {
-        dispatch(productSlice.actions.setDeletedProduct({ id }));
+        dispatch(setDeletedProduct({ id }));
       }
       return data;
     } catch (error: any) {
@@ -132,7 +128,7 @@ export const removeSelectedProduct = createAsyncThunk(
   "product/removeSelectedProduct",
   (_, { dispatch }) => {
     dispatch(
-      productSlice.actions.setSelectedProduct({
+      setSelectedProduct({
         id: "",
         name: "",
         description: "",
@@ -164,7 +160,7 @@ const productSlice = createSlice({
     setProductsList(state, action) {
       state.products = action.payload;
     },
-    setProductModalOpen(state, action) {
+    setProductModal(state, action) {
       state.modal.type = action.payload.type;
       state.modal.isOpen = action.payload.isOpen;
     },
@@ -198,5 +194,15 @@ const productSlice = createSlice({
     },
   },
 });
+
+export const {
+  setProductsList,
+  setProductModal,
+  setNewProduct,
+  setUpdatedProduct,
+  setDeletedProduct,
+  setSelectedProduct,
+  setIsFetchingProductsList,
+} = productSlice.actions;
 
 export default productSlice.reducer;
