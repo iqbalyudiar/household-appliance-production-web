@@ -7,6 +7,7 @@ import { logout } from "../../features/auth/slice/authSlice";
 import { onClose } from "@material-tailwind/react/types/components/alert";
 import routes from "../../utils/routesConfig";
 import { STORAGE_AUTH_TOKEN } from "../../features/auth/constant";
+import { normalizedName } from "../../utils/helper";
 interface IProps {
   isOpen: boolean;
   handleOpen?: MouseEventHandler<HTMLButtonElement>;
@@ -20,11 +21,10 @@ const Sidebar: React.FC<IProps> = ({ isOpen, handleClose }) => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const sidebarRoutes = routes.filter((route) => {
-    const normalizedName = route.name?.replace(/\s+/g, "").toLowerCase() || "";
-    return !excludedRoutes.includes(normalizedName);
+    return !excludedRoutes.includes(normalizedName(route?.name));
   });
 
-  const handleNavigate = (path) => {
+  const handleNavigate = (path: string) => {
     navigate(path);
     handleClose && handleClose();
   };
