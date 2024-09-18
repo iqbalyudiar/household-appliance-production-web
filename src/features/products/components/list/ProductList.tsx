@@ -6,6 +6,7 @@ import {
   setProductModalOpen,
   getProduct,
 } from "../../slice/productSlice";
+import { STORAGE_AUTH_TOKEN } from "../../../auth/constant";
 const TABLE_HEAD = ["Name", "Description", "Price", "Action"];
 
 const ProductList = () => {
@@ -13,6 +14,7 @@ const ProductList = () => {
   const { products, isFetchingProductsList } = useAppSelector(
     (state) => state.products
   );
+  const isAuthenticated = localStorage.getItem(STORAGE_AUTH_TOKEN);
 
   const getProducts = useCallback(async () => {
     await dispatch(getProductsList());
@@ -104,26 +106,32 @@ const ProductList = () => {
                     </Typography>
                   </td>
                   <td className={`${classes} flex`}>
-                    <Typography
-                      as="a"
-                      href="#"
-                      variant="small"
-                      color="blue-gray"
-                      className="font-medium mr-3"
-                      onClick={() => handleEdit(_id)}
-                    >
-                      Edit
-                    </Typography>
-                    <Typography
-                      as="a"
-                      href="#"
-                      variant="small"
-                      color="red"
-                      className="font-medium"
-                      onClick={() => handleDelete(_id)}
-                    >
-                      Delete
-                    </Typography>
+                    {isAuthenticated ? (
+                      <>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="blue-gray"
+                          className="font-medium mr-3"
+                          onClick={() => handleEdit(_id)}
+                        >
+                          Edit
+                        </Typography>
+                        <Typography
+                          as="a"
+                          href="#"
+                          variant="small"
+                          color="red"
+                          className="font-medium"
+                          onClick={() => handleDelete(_id)}
+                        >
+                          Delete
+                        </Typography>
+                      </>
+                    ) : (
+                      "-"
+                    )}
                   </td>
                 </tr>
               );
